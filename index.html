@@ -9,23 +9,26 @@
   <body>
     <h1>Любимые цвета студентов</h1>
     <ul class="students" id="list">
-      <li class="student">
+      <li class="student" data-color="#ff2600">
         <p class="student-name">
           Глеб, любимый цвет
-          <span class="change-color" style="color: #ff2600;">#ff2600</span>
+          <span style="color: #ff2600;">#ff2600</span>
         </p>
+        <button class="button-hello" data-name="Глеб">Привет</button>
       </li>
-      <li class="student">
+      <li class="student" data-color="#00f900">
         <p class="student-name">
           Иван, любимый цвет
-          <span class="change-color" style="color: #00f900;">#00f900</span>
+          <span style="color: #00f900;">#00f900</span>
         </p>
+        <button class="button-hello" data-name="Иван">Привет</button>
       </li>
-      <li class="student">
+      <li class="student" data-color="#0432ff">
         <p class="student-name">
           Люси, любимый цвет
-          <span class="change-color" style="color: #0432ff;"> #0432ff</span>
+          <span style="color: #0432ff;"> #0432ff</span>
         </p>
+        <button class="button-hello" data-name="Люси">Привет</button>
       </li>
     </ul>
 
@@ -55,14 +58,38 @@
     const nameInputElement = document.getElementById("name-input");
     const colorInputElement = document.getElementById("color-input");
 
+const buttonFunction = () => {
+  const buttonsHello = document.querySelectorAll(".button-hello");
+
+for (const buttonHello of buttonsHello) {
+
+  buttonHello.addEventListener("click", () => {
+
+    const name = buttonHello.dataset.name;
+
+       alert ('Привет, ' + name)
+     
+  
+})
+}
+}
+buttonFunction();
+
+
     const studentElements = document.querySelectorAll(".student");
 
+    // Добавляет обработчики кликов ко всем элементам с классом student
     const initEventListeners = () => {
+      // Находит все элементы с классом student в разметке
       const studentElements = document.querySelectorAll(".student");
 
+      // Цикл for проходит по каждому элементу в списке
       for (const studentElement of studentElements) {
+        // Добавляет обработчик клика на конкретный элемент в списке
         studentElement.addEventListener("click", () => {
-          console.log(1);
+          // Достает data-color из элемента
+          const color = studentElement.dataset.color;
+          console.log(color);
         });
       }
     };
@@ -79,32 +106,18 @@
 
       listElement.innerHTML =
         listElement.innerHTML +
-        `<li class="student">
+        `<li class="student" data-color="${colorInputElement.value}">
             <p class="student-name">
               ${nameInputElement.value}, любимый цвет
               <span style="color: ${colorInputElement.value}"> ${colorInputElement.value}</span>
             </p>
+            <button class="button-hello" data-name="${nameInputElement.value}"> Привет </button>
           </li>`;
 
       initEventListeners();
+      buttonFunction ();
 
       nameInputElement.value = "";
     });
-
-    const changingBodyColor = () => {
-    const elements = document.querySelectorAll("body");
-    const bodyElement = elements[0];
-
-    const colorChange = document.querySelectorAll(".change-color");
-
-    for (const itemColor of colorChange) {
-      itemColor.addEventListener("click", () => {
-        bodyElement.style.backgroundColor = "red";
-      })
-    }
-    
-  }
-
-  changingBodyColor();
   </script>
 </html>
