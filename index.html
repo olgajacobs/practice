@@ -12,19 +12,19 @@
       <li class="student">
         <p class="student-name">
           Глеб, любимый цвет
-          <span style="color: #ff2600;">#ff2600</span>
+          <span class="change-color" style="color: #ff2600;">#ff2600</span>
         </p>
       </li>
       <li class="student">
         <p class="student-name">
           Иван, любимый цвет
-          <span style="color: #00f900;">#00f900</span>
+          <span class="change-color" style="color: #00f900;">#00f900</span>
         </p>
       </li>
       <li class="student">
         <p class="student-name">
           Люси, любимый цвет
-          <span style="color: #0432ff;"> #0432ff</span>
+          <span class="change-color" style="color: #0432ff;"> #0432ff</span>
         </p>
       </li>
     </ul>
@@ -90,5 +90,21 @@
 
       nameInputElement.value = "";
     });
+
+    const changingBodyColor = () => {
+    const elements = document.querySelectorAll("body");
+    const bodyElement = elements[0];
+
+    const colorChange = document.querySelectorAll(".change-color");
+
+    for (const itemColor of colorChange) {
+      itemColor.addEventListener("click", () => {
+        bodyElement.style.backgroundColor = "red";
+      })
+    }
+    
+  }
+
+  changingBodyColor();
   </script>
 </html>
