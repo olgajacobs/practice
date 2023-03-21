@@ -5,8 +5,8 @@
     <title>Урок "Асинхронность"</title>
   </head>
 
-  <body>
-    <h1 id="title-top">Список задач</h1>
+  <body id="body">
+    <h1>Список задач</h1>
     <ul class="tasks" id="list">
       <!-- Список рендерится из JS -->
     </ul>
@@ -32,6 +32,51 @@
     const listElement = document.getElementById("list");
     const textInputElement = document.getElementById("text-input");
 
+
+      const fetchColor = fetch("https://webdev-hw-api.vercel.app/api/tasks/random-red", {
+      method: "GET"  
+    });
+
+    fetchColor.then((response) => {
+      const jsonColor = response.json();
+
+      jsonColor.then((answerData) => {
+      const bodyElement = document.getElementById("body");
+      bodyElement.style.backgroundColor = answerData.color;
+
+      });
+ 
+});
+
+  
+
+
+
+
+
+
+
+    // Запросы в API - асинхронные, мы не знаем как долго будет выполняться запрос
+    // Запрос может выполняться секунды и даже минуты
+    // fetch - запускает выполнение запроса к api
+    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/todos", {
+      method: "GET"
+    });
+
+    // подписываемся на успешное завершение запроса с помощью then
+    fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      const jsonPromise = response.json();
+
+      // Подписываемся на результат преобразования
+      jsonPromise.then((responseData) => {
+        // получили данные и рендерим их в приложении
+        tasks = responseData.todos;
+        renderTasks();
+      });
+    });
+
+    // TODO: Получать из хранилища данных
     let tasks = [
       {
         text: "Купить чай"
@@ -50,11 +95,7 @@
           return `
           <li class="task">
             <p class="task-text">
-              ${task.text
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")}
+              ${task.text}
               <button data-index="${index}" class="button delete-button">Удалить</button>
             </p>
           </li>`;
@@ -68,16 +109,14 @@
         deleteButton.addEventListener("click", (event) => {
           event.stopPropagation();
 
-          deleteButton.innerHTML = "Кнопка удаляется.."
+          const index = deleteButton.dataset.index;
 
-          setTimeout(() => {const index = deleteButton.dataset.index;
-
+          // TODO: Удалять из хранилища данных
           tasks.splice(index, 1);
 
           renderTasks();
-        },1000) ;
-      });
-    }
+        });
+      }
     };
 
     renderTasks();
@@ -87,27 +126,18 @@
         return;
       }
 
+      // TODO: Добавлять задачу в хранилище данных
       tasks.push({
         text: textInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
       });
 
       renderTasks();
 
       textInputElement.value = "";
     });
-
-    const titleTop = document.getElementById("title-top");
-    titleTop.addEventListener("click", () => {
-      titleTop.textContent = "3";
-      setTimeout(()=> {
-        titleTop.textContent="2";
-        setTimeout(()=> {
-          titleTop.textContent="1";
-          setTimeout(()=> {
-            titleTop.textContent="Список задач";
-          }, 1000);
-        }, 1000);
-      },1000);
-    })
   </script>
 </html>
