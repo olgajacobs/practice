@@ -5,7 +5,7 @@
     <title>Урок "Асинхронность"</title>
   </head>
 
-  <body id="body">
+  <body>
     <h1>Список задач</h1>
     <ul class="tasks" id="list">
       <!-- Список рендерится из JS -->
@@ -32,33 +32,12 @@
     const listElement = document.getElementById("list");
     const textInputElement = document.getElementById("text-input");
 
-
-      const fetchColor = fetch("https://webdev-hw-api.vercel.app/api/tasks/random-red", {
-      method: "GET"  
-    });
-
-    fetchColor.then((response) => {
-      const jsonColor = response.json();
-
-      jsonColor.then((answerData) => {
-      const bodyElement = document.getElementById("body");
-      bodyElement.style.backgroundColor = answerData.color;
-
-      });
- 
-});
-
-  
-
-
-
-
-
-
+    // TODO: Получать из хранилища данных
+    let tasks = [];
 
     // Запросы в API - асинхронные, мы не знаем как долго будет выполняться запрос
     // Запрос может выполняться секунды и даже минуты
-    // fetch - запускает выполнение запроса к api
+    // fetch - запускает запрос в api
     const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/todos", {
       method: "GET"
     });
@@ -76,27 +55,14 @@
       });
     });
 
-    // TODO: Получать из хранилища данных
-    let tasks = [
-      {
-        text: "Купить чай"
-      },
-      {
-        text: "Заварить чай"
-      },
-      {
-        text: "Выпить чай"
-      }
-    ];
-
     const renderTasks = () => {
       const tasksHtml = tasks
-        .map((task, index) => {
+        .map((task) => {
           return `
           <li class="task">
             <p class="task-text">
               ${task.text}
-              <button data-index="${index}" class="button delete-button">Удалить</button>
+              <button data-id="${task.id}" class="button delete-button">Удалить</button>
             </p>
           </li>`;
         })
@@ -109,11 +75,18 @@
         deleteButton.addEventListener("click", (event) => {
           event.stopPropagation();
 
-          const index = deleteButton.dataset.index;
+          const id = deleteButton.dataset.id;
 
-          // TODO: Удалять из хранилища данных
-          tasks.splice(index, 1);
-
+          fetch("https://webdev-hw-api.vercel.app/api/todos/" + id, {
+            method: "DELETE"
+          }).then((response) => {
+            response.json().then((responseData) => {
+              // получили данные и рендерим их в приложении
+              tasks = responseData.todos;
+              renderTasks();
+            });
+          });
+          
           renderTasks();
         });
       }
@@ -126,13 +99,18 @@
         return;
       }
 
-      // TODO: Добавлять задачу в хранилище данных
-      tasks.push({
-        text: textInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
+      // подписываемся на успешное завершение запроса с помощью then
+      fetch("https://webdev-hw-api.vercel.app/api/todos", {
+        method: "POST",
+        body: JSON.stringify({
+          text: textInputElement.value
+        })
+      }).then((response) => {
+        response.json().then((responseData) => {
+          // получили данные и рендерим их в приложении
+          tasks = responseData.todos;
+          renderTasks();
+        });
       });
 
       renderTasks();
